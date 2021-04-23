@@ -45,14 +45,14 @@ const initialFormErrors = {
   password: "",
   email: "",
   termsOfService: "",
-}
+};
 
 const initialUsers = [];
 const initialDisabled = true;
 
 export default function App() {
   // useState //
-  const [users, setUsers] = useState(initialUsers); 
+  const [users, setUsers] = useState(initialUsers);
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
@@ -63,7 +63,7 @@ export default function App() {
     axios
       .get("https://reqres.in/api/users")
       .then((res) => {
-        setUsers(res.data);
+        setUsers(res?.data?.data);
       })
       .catch((err) => {
         console.log(err);
@@ -71,10 +71,12 @@ export default function App() {
   };
 
   const postNewUser = (newUser) => {
+    console.log("post", newUser);
     axios
       .post("https://reqres.in/api/users", newUser)
       .then((res) => {
-        setUsers([res.data, ...users]);
+        console.log('res', res)
+        setUsers([res?.data, ...users]);
         setFormValues(initialFormValues);
       })
       .catch((err) => {
@@ -125,13 +127,15 @@ export default function App() {
     });
   }, [formValues]);
 
+  console.log("users", users);
+
   return (
     <div className="container">
       <header>
         <h1>CREATE A NEW USER</h1>
       </header>
 
-      <Form 
+      <Form
         values={formValues}
         change={inputChange}
         submit={formSubmit}
@@ -139,14 +143,9 @@ export default function App() {
         errors={formErrors}
       />
 
-      {users.map((user) => {
-        return <User key={user.id} details={user} />;
-      })}
+      {users.map(user => (
+        <User key={user.id} details={user} />
+      ))}
     </div>
-  )
+  );
 }
-
-
-
-
-

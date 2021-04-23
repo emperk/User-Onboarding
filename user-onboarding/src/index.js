@@ -1,6 +1,9 @@
 // import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+// import ReactDOM from 'react-dom';
+// import { worker } from './api-mocks/browser'
+// worker.start()
+
+// import './index.css';
 // import App from './App';
 // import reportWebVitals from './reportWebVitals';
 
@@ -16,13 +19,28 @@ import './index.css';
 // // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-import React from 'react';
+// import React from 'react';
+// import { render } from 'react-dom'
+// import App from './App';
+
+// render(
+//   <App />
+//   , document.querySelector('#root')
+// )
+import React from 'react'
 import { render } from 'react-dom'
-import App from './App';
+
+// 👉 Importing the top-level component
+import App from './App'
+
+// This is for the fake API. Do not delete!
+// import { worker } from './api-mocks/browser'
+// worker.start()
+
+// 👉 Importing React libs from node_modules folder
 
 render(
   <App />
   , document.querySelector('#root')
 )
-
 
