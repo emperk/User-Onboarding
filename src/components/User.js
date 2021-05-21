@@ -7,9 +7,19 @@ function User({details}) {
 
   return (
     <div className="friend container">
-      <h2>{details.username}</h2>
+      <p>{details.first_name}</p>
       <p>Email: {details.email}</p>
-      <p>Password: {details.password}</p>
+      {/* <p>Password: {details.password}</p> */}
+
+      {
+        !!details.termsOfService && !!details.termsOfService.length &&
+        <div>
+          Terms of Service:
+          <ul>
+            {details.termsOfService.map((term, idx) => <li key={idx}>{term}</li>)}
+          </ul>
+        </div>
+      }
     </div>
   )
 }

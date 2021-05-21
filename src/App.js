@@ -33,16 +33,16 @@ import * as yup from "yup";
 
 const initialFormValues = {
   // TEXT INPUTS //
-  username: "",
+  name: "",
   password: "",
   email: "",
-  // checkbox // 
+  // checkbox //
   agree: false,
   disagree: false,
 };
 
 const initialFormErrors = {
-  username: "",
+  name: "",
   password: "",
   email: "",
 };
@@ -50,7 +50,7 @@ const initialFormErrors = {
 const initialUsers = [];
 const initialDisabled = true;
 
-export default function App () {
+export default function App() {
   // useState //
   const [users, setUsers] = useState(initialUsers);
   const [formValues, setFormValues] = useState(initialFormValues);
@@ -64,49 +64,71 @@ export default function App () {
       .get("https://reqres.in/api/users")
       .then((response) => {
         setUsers(response?.data?.data);
-      })
-      .catch((error) => {
-        console.log("THE ERROR: ", error)
-      });
-  };
-
-  const postNewUser = (newUser) => {
-    console.log("post", newUser);
-    axios
-      .post("https://reqres.in/api/users")
-      .then((response) => {
-        console.log("THE RESPONSE: ", response)
-        setUsers([response?.data, ...users]);
+        console.log("RESPONSE DATA FROM GET USERS: ", response.data);
       })
       .catch((error) => {
         console.log("THE ERROR: ", error);
       });
   };
 
-  const inputChange = (name, value) => {
-    yup
-      .reach(schema, name)
-      .validate(value)
-      .then(() => {
-        setFormErrors({
-          ...formErrors,
-          [name]: "",
-        });
+  const postNewUser = (newUser) => {
+    console.log("post", newUser);
+    axios
+      .post("https://reqres.in/api/users", newUser)
+      .then((response) => {
+        console.log("THE RESPONSE: ", response);
+        setUsers([response?.data, ...users]);
+        setFormValues(initialFormValues);
       })
       .catch((error) => {
-        setFormErrors({
-          ...formErrors, 
-          [name]: value,
-        });
+        console.log("THE ERROR: ", error);
       });
+  };
+
+  // const validate = (name, value) => {
+  //   yup.reach(schema, name)
+  //     .validate(value)
+  //     .then(() =>
+  //       setFormErrors({
+  //         ...formErrors, [name]: ''
+  //       }))
+  // }
+
+  // const inputChange = (name, value) => {
+  //   validate(name, value)
+  //   setFormValues ({
+  //     ...formValues,
+  //     [name]: value
+  //   })
+  // }
+
+  const validate = (name, value) => {
+    yup.reach(schema, name)
+      .validate(value)
+      .then(() => setFormErrors({ ...formErrors, [name]: ''}))
+      .catch(err => 
+        setFormErrors({ 
+          ...formErrors, [
+            name]: err.errors[0]
+          }))
+  }
+
+  const inputChange = (name, value) => {
+    validate(name, value)
+    setFormValues({
+      ...formValues,
+      [name]: value // NOT AN ARRAY
+    })
   };
 
   const formSubmit = () => {
     const newUser = {
-      username: formValues.username.trim(),
+      name: formValues.name.trim(),
       password: formValues.password.trim(),
       email: formValues.email.trim(),
+      termsOfService: ["agree", "disagree"].filter(term => formValues[term]),
     };
+
     postNewUser(newUser);
   };
 
@@ -114,11 +136,15 @@ export default function App () {
     getUsers();
   }, []);
 
+  // useEffect(() => {
+  //   schema.isValid(formValues).then((valid) => {
+  //     setDisabled(!valid);
+  //   });
+  // }, [formValues]);
+
   useEffect(() => {
-    schema.isValid(formValues).then((valid) => {
-      setDisabled(!valid);
-    });
-  }, [formValues]);
+    schema.isValid(formValues).then(valid => setDisabled(!valid))
+  }, [formValues])
 
   console.log("users", users);
 
@@ -128,7 +154,7 @@ export default function App () {
         <h1>Create a New User</h1>
       </header>
 
-      <Form 
+      <Form
         values={formValues}
         change={inputChange}
         submit={formSubmit}
@@ -142,7 +168,3 @@ export default function App () {
     </div>
   );
 }
-
-
-
-
